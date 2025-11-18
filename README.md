@@ -91,7 +91,7 @@ $user = 'admin';
 // Exemple2 d'utilisation (identique à votre code)
 echo Sublime(fn() =>
     body_(
-        [
+        [ // data: non obligatoire pour 1 élement 
             link_(rel: 'stylesheet', href: 'style.css'),
             div_(class: 'container', data: [
                 header_([
@@ -99,7 +99,7 @@ echo Sublime(fn() =>
                     nav_([
                         a_(href: '/', data: 'Accueil'),
                         a_(href: '/about', data: 'À propos'),
-                        $user !== 'admin' ? ruby_(' 漢 6565') : ' => admin',
+                        $user !== 'admin' ? ruby_(' 漢 6565') : ' => admin', // utilisations des conditions 
 						div_(
 							class: 'article',
 							data: raw_html('<z>test de texte</z>')
@@ -110,9 +110,9 @@ echo Sublime(fn() =>
                     p_("Bienvenue sur mon site"),
                     img_(src: 'img/photo.jpg', alt: 'Photo')
                 ]),
-                footer_([
-                    p_(small_('© 2024'))
-                ])
+                footer_(
+                    p_(small_('© 2024')) //  [] pas obligatoire pour 1 elements
+                )
             ])
         ]
     )
