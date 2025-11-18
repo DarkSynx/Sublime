@@ -85,7 +85,10 @@ Résultat :
 ```
 ## 🔧 Exemple 2 d’utilisation Condition + "data:" non obligatoire sans arguments
 ```php
-// Exemple d'utilisation (identique à votre code)
+namespace Sublime;
+include "sublime.php";
+$user = 'admin';
+// Exemple2 d'utilisation (identique à votre code)
 echo Sublime(fn() =>
     body_(
         [
@@ -96,7 +99,7 @@ echo Sublime(fn() =>
                     nav_([
                         a_(href: '/', data: 'Accueil'),
                         a_(href: '/about', data: 'À propos'),
-                        $user !== 'admin' ? ruby_(' 漢 6565') : ' => admin', // Condition 
+                        $user !== 'admin' ? ruby_(' 漢 6565') : ' => admin',
 						div_(
 							class: 'article',
 							data: raw_html('<z>test de texte</z>')
