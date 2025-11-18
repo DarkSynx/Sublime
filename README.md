@@ -83,7 +83,64 @@ Résultat :
 </body>
 
 ```
+## 🔧 Exemple 2 d’utilisation Condition + "data:" non obligatoire sans arguments
+```php
+// Exemple d'utilisation (identique à votre code)
+echo Sublime(fn() =>
+    body_(
+        [
+            link_(rel: 'stylesheet', href: 'style.css'),
+            div_(class: 'container', data: [
+                header_([
+                    h1_('Mon Super Site'),
+                    nav_([
+                        a_(href: '/', data: 'Accueil'),
+                        a_(href: '/about', data: 'À propos'),
+                        $user !== 'admin' ? ruby_(' 漢 6565') : ' => admin', // Condition 
+						div_(
+							class: 'article',
+							data: raw_html('<z>test de texte</z>')
+						)
+                    ])
+                ]),
+                main_([
+                    p_("Bienvenue sur mon site"),
+                    img_(src: 'img/photo.jpg', alt: 'Photo')
+                ]),
+                footer_([
+                    p_(small_('© 2024'))
+                ])
+            ])
+        ]
+    )
+);
+```
 
+Résultat :
+
+```html
+<body>
+    <link rel="stylesheet" href="style.css" />
+    <div class="container">
+        <header>
+            <h1>Mon Super Site</h1>
+            <nav>
+                <a href="/">Accueil</a><a href="/about">À propos</a> =&gt; admin
+                <div class="article"><z>test de texte</z></div>
+            </nav>
+        </header>
+        <main>
+            <p>Bienvenue sur mon site</p>
+            <img src="img/photo.jpg" alt="Photo" />
+        </main>
+        <footer>
+            <p><small>© 2024</small></p>
+        </footer>
+    </div>
+</body>
+
+
+```
 ---
 
 ## 🧩 Pourquoi Sublime PHP ?
