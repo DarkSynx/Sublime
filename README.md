@@ -24,22 +24,64 @@ Elle offre une syntaxe claire, inspirée de React/JSX, permettant de construire 
 ## 🔧 Exemple d’utilisation
 
 ```php
-echo sublime(function() {
-    return div(
-        ['class' => 'card'],
-        h1([], "Hello World"),
-        p([], "This is generated with Sublime PHP.")
-    );
-});
+namespace Sublime;
+include "sublime.php";
+// Exemple d'utilisation (identique à votre code)
+echo Sublime(fn() =>
+    body_(
+        data: [
+            link_(rel: 'stylesheet', href: 'style.css'),
+            div_(class: 'container', data: [
+                header_(data: [
+                    h1_('Mon Super Site'),
+                    nav_(data: [
+                        a_(href: '/', data: 'Accueil'),
+                        a_(href: '/about', data: 'À propos'),
+                        ruby_(' 漢 6565'),
+						div_(
+							class: 'article',
+							data: raw_html('<z>test de texte</z>')
+						)
+                    ])
+                ]),
+                main_(data: [
+                    p_("Bienvenue sur mon site"),
+                    img_(src: 'img/photo.jpg', alt: 'Photo')
+                ]),
+                footer_(data: [
+                    p_(small_('© 2024'))
+                ])
+            ])
+        ]
+    )
+);
 ```
 
 Résultat :
 
 ```html
-<div class="card">
-  <h1>Hello World</h1>
-  <p>This is generated with Sublime PHP.</p>
-</div>
+<body>
+   <link rel="stylesheet" href="style.css">
+   <div class="container">
+      <header>
+         <h1>Mon Super Site</h1>
+         <nav>
+            <a href="/">Accueil</a><a href="/about">À propos</a><ruby> 漢 6565</ruby>
+            <div class="article">
+               <z>test de texte</z>
+            </div>
+         </nav>
+      </header>
+      <main>
+         <p>Bienvenue sur mon site</p>
+         <img src="img/photo.jpg" alt="Photo">
+      </main>
+      <footer>
+         <p><small>© 2024</small></p>
+      </footer>
+   </div>
+</body>
+
 ```
 
 ---
