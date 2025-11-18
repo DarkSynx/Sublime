@@ -90,8 +90,7 @@ include "sublime.php";
 $user = 'admin';
 // Exemple2 d'utilisation (identique à votre code)
 echo Sublime(fn() =>
-    body_(
-        [ // data: non obligatoire pour 1 élement 
+    body_([ // data: non obligatoire pour 1 élement 
             link_(rel: 'stylesheet', href: 'style.css'),
             div_(class: 'container', data: [
                 header_([
@@ -110,13 +109,9 @@ echo Sublime(fn() =>
                     p_("Bienvenue sur mon site"),
                     img_(src: 'img/photo.jpg', alt: 'Photo')
                 ]),
-                footer_(
-                    p_(small_('© 2024')) //  [] pas obligatoire pour 1 elements
-                )
+                footer_( p_(small_('© 2024')) ) //  [] pas obligatoire pour 1 elements
             ])
-        ]
-    )
-);
+        ]));
 ```
 
 Résultat :
