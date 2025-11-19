@@ -1,174 +1,126 @@
-# Sublime
+# Sublime PHP
 
-# 🌟 Sublime PHP — Functional & Immutable HTML Builder
+Functional & immutable HTML builder for PHP 8.1+.
 
-**Sublime PHP** est une mini-librairie légère et élégante permettant de générer du HTML en PHP de manière **fonctionnelle**, **immutable** et **expressive**, sans templates, sans dépendances, uniquement du PHP moderne.
+[![CI](https://github.com/DarkSynx/Sublime/actions/workflows/ci.yml/badge.svg)](https://github.com/DarkSynx/Sublime/actions/workflows/ci.yml)
+![Packagist version](https://img.shields.io/badge/packagist-coming%20soon-lightgrey)
+![License](https://img.shields.io/github/license/DarkSynx/Sublime)
 
-Elle offre une syntaxe claire, inspirée de React/JSX, permettant de construire des éléments HTML comme des objets immuables, tout en conservant la simplicité du langage.
+## Installation
 
----
+Install the library via [Composer](https://getcomposer.org/):
 
-## 🚀 Fonctionnalités principales
-
-* **API 100% immuable** : chaque modification retourne une nouvelle instance
-* **Construction HTML déclarative**
-* **Gestion automatique des children** : chaînes, nombres, tableaux, callbacks, éléments imbriqués
-* **Normalisation intelligente** des structures
-* **Échappement sécurisé du contenu**
-* **Fonctions utilitaires simples à utiliser**
-* **Compatible PHP moderne (>= 8.1)**
-* **Aucune dépendance externe**
-
----
-
-## 🔧 Exemple d’utilisation
-
-```php
-namespace Sublime;
-include "sublime.php";
-// Exemple d'utilisation (identique à votre code)
-echo Sublime(fn() =>
-    body_(
-        data: [
-            link_(rel: 'stylesheet', href: 'style.css'),
-            div_(class: 'container', data: [
-                header_(data: [
-                    h1_('Mon Super Site'),
-                    nav_(data: [
-                        a_(href: '/', data: 'Accueil'),
-                        a_(href: '/about', data: 'À propos'),
-                        ruby_(' 漢 6565'),
-						div_(
-							class: 'article',
-							data: raw_html('<z>test de texte</z>')
-						)
-                    ])
-                ]),
-                main_(data: [
-                    p_("Bienvenue sur mon site"),
-                    img_(src: 'img/photo.jpg', alt: 'Photo')
-                ]),
-                footer_(data: [
-                    p_(small_('© 2024'))
-                ])
-            ])
-        ]
-    )
-);
+```bash
+composer require darksynx/sublime
 ```
 
-Résultat :
+Once installed, everything is auto-loaded through Composer:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . '/vendor/autoload.php';
+
+use function Sublime\{Sublime, body_, div_, p_};
+
+echo Sublime(fn () => body_(data: [
+    div_(class: 'app', data: [
+        p_('Hello, Sublime!')
+    ])
+]));
+```
+
+## Basic usage
+
+Sublime exposes a `Sublime(fn () => ...)` entry point. Inside the callback you compose HTML using the underscore tag helpers (`body_()`, `div_()`, `p_()`, ...). All children are normalized, arrays are flattened, and scalar values are escaped by default.
+
+```php
+use function Sublime\{Sublime, body_, div_, h1_, p_};
+
+echo Sublime(fn () => body_(data: [
+    div_(class: 'container', data: [
+        h1_('Welcome 👋'),
+        p_('Build HTML with pure PHP, no templates required.'),
+    ]),
+]));
+```
+
+Output:
 
 ```html
 <body>
-   <link rel="stylesheet" href="style.css">
-   <div class="container">
-      <header>
-         <h1>Mon Super Site</h1>
-         <nav>
-            <a href="/">Accueil</a><a href="/about">À propos</a><ruby> 漢 6565</ruby>
-            <div class="article">
-               <z>test de texte</z>
-            </div>
-         </nav>
-      </header>
-      <main>
-         <p>Bienvenue sur mon site</p>
-         <img src="img/photo.jpg" alt="Photo">
-      </main>
-      <footer>
-         <p><small>© 2024</small></p>
-      </footer>
-   </div>
-</body>
-
-```
-## 🔧 Exemple 2 d’utilisation Condition + "data:" non obligatoire sans arguments
-```php
-namespace Sublime;
-include "sublime.php";
-$user = 'admin';
-// Exemple2 d'utilisation (identique à votre code)
-echo Sublime(fn() =>
-    body_([ // data: non obligatoire pour 1 élement 
-            link_(rel: 'stylesheet', href: 'style.css'),
-            div_(class: 'container', data: [
-                header_([
-                    h1_('Mon Super Site'),
-                    nav_([
-                        a_(href: '/', data: 'Accueil'),
-                        a_(href: '/about', data: 'À propos'),
-                        $user !== 'admin' ? ruby_(' 漢 6565') : ' => admin', // utilisations des conditions 
-						div_(
-							class: 'article',
-							data: raw_html('<z>test de texte</z>')
-						)
-                    ])
-                ]),
-                main_([
-                    p_("Bienvenue sur mon site"),
-                    img_(src: 'img/photo.jpg', alt: 'Photo')
-                ]),
-                footer_( p_(small_('© 2024')) ) //  [] pas obligatoire pour 1 elements
-            ])
-        ]));
-```
-
-Résultat :
-
-```html
-<body>
-    <link rel="stylesheet" href="style.css" />
     <div class="container">
-        <header>
-            <h1>Mon Super Site</h1>
-            <nav>
-                <a href="/">Accueil</a><a href="/about">À propos</a> =&gt; admin
-                <div class="article"><z>test de texte</z></div>
-            </nav>
-        </header>
-        <main>
-            <p>Bienvenue sur mon site</p>
-            <img src="img/photo.jpg" alt="Photo" />
-        </main>
-        <footer>
-            <p><small>© 2024</small></p>
-        </footer>
+        <h1>Welcome 👋</h1>
+        <p>Build HTML with pure PHP, no templates required.</p>
     </div>
 </body>
-
-
 ```
----
 
-## 🧩 Pourquoi Sublime PHP ?
+## Components and composition
 
-* Idéal pour générer du HTML côté serveur sans utiliser de moteur de template
-* Parfait pour des projets où vous voulez **garder PHP pur**
-* Offre une approche moderne : **immutabilité**, **purification du DOM**, **callbacks**
-* Léger, compréhensible, extensible
-
----
-
-## 📦 Installation
-
-Ajouter simplement le fichier dans votre projet et incluez-le :
+Everything is just PHP, so you can create reusable components by returning `HtmlElement` instances from plain functions.
 
 ```php
-require_once 'sublime.php';
+use Sublime\HtmlElement;
+use function Sublime\{div_, nav_, a_, main_, footer_, small_, Sublime, body_};
+
+function navbar(): HtmlElement
+{
+    return nav_(data: [
+        a_(href: '/', data: 'Home'),
+        a_(href: '/docs', data: 'Docs'),
+        a_(href: '/github', data: 'GitHub'),
+    ]);
+}
+
+function layout(HtmlElement $content): HtmlElement
+{
+    return body_(data: [
+        navbar(),
+        main_(data: $content),
+        footer_(data: small_('© ' . date('Y')))
+    ]);
+}
+
+echo Sublime(fn () => layout(div_('Hello from a component!')));
 ```
 
-Aucune configuration nécessaire.
+## Escaping and `RawHtml`
 
----
+* Every string child and attribute is HTML-escaped automatically (`&`, `<`, `>`, quotes, etc.).
+* Nested arrays, `null`, and `false` values are removed when normalizing children.
+* When you really need to inject trusted markup, wrap it in `raw_html('<span>Trusted</span>')`. **Do not** use `RawHtml` for user-generated content, otherwise you may introduce XSS vulnerabilities.
 
-## 📝 Compatibilité
+```php
+use function Sublime\{div_, raw_html};
 
-* PHP 8.1+
-* Fonctionne sur tout type de projet : API, back-office, micro-framework, CLI, etc.
+div_(data: [
+    'Safe: ',
+    raw_html('<strong>Trusted markup</strong>'),
+]);
+```
 
----
+## Examples
 
-## 📚 Licence
+Run the bundled examples with:
 
-MIT — Libre d’utilisation, même dans des projets commerciaux.
+```bash
+php -S localhost:8000 -t examples
+```
+
+* `examples/basic.php` – minimal “Hello world” rendering.
+* `examples/components.php` – layout + reusable components.
+* `examples/conditions.php` – conditional rendering in callbacks.
+
+## Limitations & roadmap
+
+* No template inheritance – compose everything with PHP functions.
+* No client-side hydration helpers yet.
+* Limited to standard HTML tag helpers (custom elements are supported by calling `_tag('my-element', ...)`).
+* Future roadmap: better documentation, Packagist release, and extra developer tooling.
+
+## License
+
+Released under the [MIT License](LICENSE).

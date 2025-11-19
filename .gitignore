@@ -1,0 +1,7 @@
+/vendor/
+/.idea/
+/.vscode/
+/phpunit.xml.cache
+/.php-cs-fixer.cache
+/coverage/
+/.phpunit.result.cache
