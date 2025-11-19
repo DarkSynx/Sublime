@@ -58,6 +58,47 @@ Output:
 </body>
 ```
 
+### "One shot" include (no `use function` imports)
+
+If you are prototyping or want the smallest possible bootstrap file, you can
+simply include the generated helper file and call `Sublime()` directly without
+adding `use function ...` statements. This is convenient when sharing
+copy/pasteable examples with newcomers.
+
+```php
+<?php
+
+namespace Sublime;
+
+include __DIR__ . '/sublime.php';
+
+$user = 'admin';
+
+echo Sublime(fn () =>
+    body_([
+        link_(rel: 'stylesheet', href: 'style.css'),
+        div_(class: 'container', data: [
+            header_([
+                h1_('Mon Super Site'),
+                nav_([
+                    a_(href: '/', data: 'Accueil'),
+                    a_(href: '/about', data: 'À propos'),
+                    $user !== 'admin' ? ruby_(' 漢 6565') : ' => admin',
+                    div_(
+                        class: 'article',
+                        data: raw_html('<z>test de texte</z>')
+                    ),
+                ]),
+            ]),
+        ]),
+    ])
+);
+```
+
+Composer remains the recommended installation method, but the helper file is
+100% standalone, so you can tailor the ergonomics to your preferred “one shot”
+style.
+
 ## Factory-assisted usage (no helper imports)
 
 If you prefer importing only the main `Sublime()` function, declare a parameter in
