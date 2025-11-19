@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace Sublime;
 
+use Closure;
 use InvalidArgumentException;
+use ReflectionFunction;
+use ReflectionMethod;
 use Stringable;
 
 /**
@@ -34,6 +37,71 @@ final class RawHtml implements Stringable
     public function __toString(): string
     {
         return $this->html;
+    }
+}
+
+/**
+ * Fluent factory that exposes every HTML element helper as a dynamic method.
+ *
+ * The factory is automatically injected into {@see Sublime()} callbacks that
+ * declare at least one parameter, which allows importing just the main
+ * rendering function while still having access to all helpers via
+ * `$tags->div(...)`, `$tags->body(...)`, etc.
+ */
+final class TagFactory
+{
+    /**
+     * Dynamically proxy method calls to {@see HtmlElement::create()}.
+     *
+     * @param string $name Method name representing the HTML tag.
+     * @param array<int, mixed> $arguments Arguments forwarded to the element.
+     */
+    public function __call(string $name, array $arguments): HtmlElement
+    {
+        return $this->tag($this->normalizeTagName($name), ...$arguments);
+    }
+
+    /**
+     * Explicitly create an element from a tag name.
+     */
+    public function tag(string $tag, mixed ...$args): HtmlElement
+    {
+        return HtmlElement::create($tag, ...$args);
+    }
+
+    /**
+     * Forward helper to create raw HTML content.
+     */
+    public function raw(string $html): RawHtml
+    {
+        return raw_html($html);
+    }
+
+    /**
+     * Forward helper to render a complete HTML document.
+     */
+    public function document(HtmlElement $html): string
+    {
+        return document($html);
+    }
+
+    /**
+     * Forward helper to render fragments.
+     */
+    public function fragment(mixed ...$children): string
+    {
+        return fragment(...$children);
+    }
+
+    private function normalizeTagName(string $name): string
+    {
+        $name = strtolower($name);
+
+        if (str_ends_with($name, '_')) {
+            $name = substr($name, 0, -1);
+        }
+
+        return $name;
     }
 }
 
@@ -1102,12 +1170,18 @@ function template_(mixed ...$args): HtmlElement
 /**
  * Main rendering function.
  *
+ * If the callback declares at least one parameter, a {@see TagFactory} instance
+ * is automatically injected, allowing dynamic access to all helpers without
+ * importing them individually.
+ *
  * @param callable(): (HtmlElement|RawHtml|string|null) $callback Callback that returns renderable output.
  * @return string
  */
 function Sublime(callable $callback): string
 {
-    $result = $callback();
+    $factory = new TagFactory();
+    $args = shouldInjectFactory($callback) ? [$factory] : [];
+    $result = $callback(...$args);
 
     if ($result instanceof HtmlElement) {
         return $result->render();
@@ -1122,6 +1196,29 @@ function Sublime(callable $callback): string
     }
 
     return (string) $result;
+}
+
+/**
+ * Determine whether a callback expects the {@see TagFactory} instance.
+ */
+function shouldInjectFactory(callable $callback): bool
+{
+    if ($callback instanceof Closure || is_string($callback)) {
+        if (is_string($callback) && str_contains($callback, '::')) {
+            [$class, $method] = explode('::', $callback, 2);
+            $reflection = new ReflectionMethod($class, $method);
+        } else {
+            $reflection = new ReflectionFunction($callback);
+        }
+    } elseif (is_array($callback) && count($callback) === 2) {
+        $reflection = new ReflectionMethod($callback[0], $callback[1]);
+    } elseif (is_object($callback) && method_exists($callback, '__invoke')) {
+        $reflection = new ReflectionMethod($callback, '__invoke');
+    } else {
+        return false;
+    }
+
+    return $reflection->getNumberOfParameters() > 0;
 }
 
 /**

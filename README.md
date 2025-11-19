@@ -58,6 +58,30 @@ Output:
 </body>
 ```
 
+## Factory-assisted usage (no helper imports)
+
+If you prefer importing only the main `Sublime()` function, declare a parameter in
+the callback. Sublime will automatically inject a `TagFactory` instance that
+exposes every helper dynamically:
+
+```php
+use function Sublime\Sublime;
+
+echo Sublime(fn (\Sublime\TagFactory $tags) => $tags->body(
+    data: [
+        $tags->div(
+            class: 'container',
+            data: [
+                $tags->p('Factory-powered rendering!'),
+            ],
+        ),
+    ],
+));
+```
+
+The factory also exposes `$tags->tag('my-element', ...)`, `$tags->raw('<b>..</b>')`,
+and `$tags->fragment(...)` helpers for custom elements and raw output.
+
 ## Components and composition
 
 Everything is just PHP, so you can create reusable components by returning `HtmlElement` instances from plain functions.
